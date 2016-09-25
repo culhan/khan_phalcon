@@ -19,43 +19,43 @@ $app->get('/version', function() use ($app){
   return $app->response;
 });
 
-$app->before(function() use ( $app ) {  
+// $app->before(function() use ( $app ) {  
   
-  if( isset( $app->routerignore[$app->router->getRewriteUri()] ) ){
-    return true;
-  }   
+//   if( isset( $app->routerignore[$app->router->getRewriteUri()] ) ){
+//     return true;
+//   }   
 
-  if(!$app->request->getHeader('Authorization')){
+//   if(!$app->request->getHeader('Authorization')){
 
-    ResponseHelper::unauthorized('Access is not authorized');
-    return false;
+//     ResponseHelper::unauthorized('Access is not authorized');
+//     return false;
     
-  }
-  else
-  {
+//   }
+//   else
+//   {
 
-      // improvise Bearer token scheme
-      $parts = explode(" ", $app->request->getHeader('Authorization'));
-      if(trim($parts[0]) === 'Bearer'){      
+//       // improvise Bearer token scheme
+//       $parts = explode(" ", $app->request->getHeader('Authorization'));
+//       if(trim($parts[0]) === 'Bearer'){      
 
-        if($app->storage->get($parts[1]) === null)
-        {
-          ResponseHelper::unauthorized('Expired Authorization');
-          return false;          
-        }
+//         if($app->storage->get($parts[1]) === null)
+//         {
+//           ResponseHelper::unauthorized('Expired Authorization');
+//           return false;          
+//         }
 
-        $app->storage->save($parts[1], $app->storage->get($parts[1]), $app->config->token->expiredTime);
+//         $app->storage->save($parts[1], $app->storage->get($parts[1]), $app->config->token->expiredTime);
 
-      }else{
+//       }else{
 
-        ResponseHelper::unauthorized('Invalid token format');
-        return false;
+//         ResponseHelper::unauthorized('Invalid token format');
+//         return false;
 
-      }
-  }
+//       }
+//   }
 
-  return true;
-});
+//   return true;
+// });
 
 // same prefix will not loaded, be carefull
 $utilRoute = new RouteHelper;
