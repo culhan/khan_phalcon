@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Paginator\Adapter\Model as PaginatorModel;
+
 /**
  * UserController
  */
@@ -7,20 +9,21 @@ class UserController extends Phalcon\Mvc\Controller{
 
   public function index(){
     
-    $phql = "SELECT * FROM users ORDER BY name";
+    $users = Users::find();
 
-    $robots = $this->modelsManager->executeQuery($phql);
+    // Create a Model paginator, show 10 rows by page starting from $currentPage
+    $paginator = new PaginatorModel(
+        [
+            "data"  => $users,
+            "limit" => 10,
+            "page"  => $this->request->getQuery("page", "int"),
+        ]
+    );
 
-    $data = [];
+    // Get the paginated results
+    $data = $paginator->getPaginate();
 
-    foreach ($robots as $robot) {
-        $data[] = [
-            "id"   => $robot->id,
-            "name" => $robot->name,
-        ];
-    }
-
-    echo json_encode($data);
+    return ResponseHelper::printResult($data);
 
   }
 
@@ -29,10 +32,22 @@ class UserController extends Phalcon\Mvc\Controller{
    * @return [type] [description]
    */
   public function store(){
-    
-    $params = $this->request->getPost();    
 
-    ResponseHelper::printError("a","aasds2e3");
+    $data = new Users();
+
+    if( $data->save( $this->request->getPost(), $data->getFillable() ) === false)
+    {
+        // Send errors to the client
+        $errors = [];
+
+        foreach ($data->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+
+        return ResponseHelper::printError( $errors, 409 );
+        
+    }
+
+    return ResponseHelper::printResult( $data );
   }
-
 }

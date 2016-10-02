@@ -61,4 +61,4 @@ $app->get('/version', function() use ($app){
 $utilRoute = new RouteHelper;
 
 $app = $utilRoute->loadRouteDynamic( 'AuthController', 'auth', 'post', '/', 'store', $app );
-$app = $utilRoute->loadRoute( 'UserController', 'user', $app);
+$app = $utilRoute->loadRoute( 'UserController', 'users', $app);

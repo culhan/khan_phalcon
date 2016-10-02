@@ -35,15 +35,14 @@ class RouteHelper{
 
 		$this->setPrefixRoute( $name );
 
-		if( $app->request->getMethod() == 'GET' && !isset($this->urlName['2']) )
+		if( $app->request->getMethod() == 'GET' && !isset($this->urlName['3']) )
 		{
 			// get all
 			$this->collection->get('/', 'index');
 		}
 
-		if( $app->request->getMethod() == 'GET' && isset($this->urlName['2']) )
+		if( $app->request->getMethod() == 'GET' && isset($this->urlName['3']) )
 		{			
-
 			// show
 			$this->collection->get('/{id}', 'show');
 		}
@@ -69,8 +68,8 @@ class RouteHelper{
 	 * @param [type] $name [prefix name]
 	 */
 	public function setPrefixRoute( $name )
-	{
-		$this->collection->setPrefix( '/'.$name );
+	{		
+		$this->collection->setPrefix( '/api/'.$name );
 	}
 
 	/**
@@ -117,19 +116,19 @@ class RouteHelper{
 	public function HandledRoute( $app, $name )
 	{
 		$urlName = explode('/',$app->request->getURI());
-
-		if (strpos($urlName[1], '?') !== false) 
+		
+		if (strpos($urlName[2], '?') !== false) 
 		{		    
-		    $urlName[1] = explode('?', $urlName[1])[0];
+		    $urlName[2] = explode('?', $urlName[2])[0];
 		}
 		
 		$this->urlName = $urlName;
 
-		if( !empty($this->routeMatched) || $urlName[1] != $name)
-		{			
+		if( !empty($this->routeMatched) || $urlName[2] != $name)
+		{						
 			return true;
 		}
-
+		
 		$this->routeMatched = $name;
 
 		return false;
