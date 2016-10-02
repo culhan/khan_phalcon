@@ -53,6 +53,12 @@ class RouteHelper{
 			$this->collection->post('/', 'store');
 		}
 
+		if( $app->request->getMethod() == 'PUT' )
+		{
+			// save
+			$this->collection->put('/{id}', 'update');
+		}
+
 		if( $app->request->getMethod() == 'DELETE' )
 		{
 			// delete
@@ -117,7 +123,12 @@ class RouteHelper{
 	{
 		$urlName = explode('/',$app->request->getURI());
 		
-		if (strpos($urlName[2], '?') !== false) 
+		if( !isset($urlName[2]) )
+		{
+			return true;
+		}
+		
+		if(strpos($urlName[2], '?') !== false) 
 		{		    
 		    $urlName[2] = explode('?', $urlName[2])[0];
 		}

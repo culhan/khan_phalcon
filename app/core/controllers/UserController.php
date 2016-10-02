@@ -7,6 +7,10 @@ use Phalcon\Paginator\Adapter\Model as PaginatorModel;
  */
 class UserController extends Phalcon\Mvc\Controller{  
 
+  /**
+   * [return all data based on page]
+   * @return [json] [msg]
+   */
   public function index(){
     
     $users = Users::find();
@@ -27,9 +31,26 @@ class UserController extends Phalcon\Mvc\Controller{
 
   }
 
+    /**
+   * [return all data based on page]
+   * @return [json] [msg]
+   */
+  public function show($id){
+    
+    $data = Users::findFirst($id);
+
+    if( empty($data) )
+    {
+      return ResponseHelper::printError( 'No Data Found', 404 );      
+    }
+
+    return ResponseHelper::printResult($data);
+
+  }
+
   /**
-   * [authenticaste user based on JWT Auth]
-   * @return [type] [description]
+   * [store data]
+   * @return [json] [msg]
    */
   public function store(){
 
@@ -50,4 +71,55 @@ class UserController extends Phalcon\Mvc\Controller{
 
     return ResponseHelper::printResult( $data );
   }
+
+  /**
+   * [update data]
+   * @return [json] [msg]
+   */
+  public function update($id){
+
+    $data = Users::findFirst("id = $id");
+
+    if( empty($data) )
+    {
+      return ResponseHelper::printError( 'No Data Found', 404 );      
+    }
+
+    if( $data->save( $this->request->getPut(), $data->getFillable() ) === false)
+    {
+        // Send errors to the client
+        $errors = [];
+
+        foreach ($data->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+
+        return ResponseHelper::printError( $errors, 409 );
+        
+    }
+
+    return ResponseHelper::printResult( $data );
+  }
+
+  /**
+   * [destroy data]
+   * @return [json] [msg]
+   */
+  public function destroy($id){
+
+    $data = Users::findFirst("id = $id");
+    
+    if( empty($data) )
+    {
+      return ResponseHelper::printError( 'No Data Found', 404 );      
+    }
+
+    if( $data->delete() )
+    {
+      return ResponseHelper::printResult( $data );
+    }
+
+  }
+
+  
 }
