@@ -2,6 +2,23 @@
 
 use Phalcon\Mvc\View\Simple as View;
 use Phalcon\Mvc\Url as UrlResolver;
+use Phalcon\Security;
+
+/**
+ * Shared configuration security hash
+ */
+$di->set(
+    "security",
+    function () {
+        $security = new Security();
+
+        // Set the password hashing factor to 12 rounds
+        $security->setWorkFactor(12);
+
+        return $security;
+    },
+    true
+);
 
 /**
  * Shared configuration service
@@ -64,7 +81,7 @@ $di->setShared('jwt', function(){
  */
 $di->setShared('routerignore', function(){
   return array(
-    '/auth' => '',
+    '/api/auth' => '',
     '/version' => '',
   );
 });

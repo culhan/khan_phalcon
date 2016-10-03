@@ -132,7 +132,7 @@ class Users extends BootModel
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = $this->getDI()->get('security')->hash( $password );
 
         return $this;
     }

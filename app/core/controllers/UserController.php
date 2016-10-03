@@ -37,7 +37,7 @@ class UserController extends Phalcon\Mvc\Controller{
    */
   public function show($id){
     
-    $data = Users::findFirst($id);
+    $data = Users::findFirst("id = $id");
 
     if( empty($data) )
     {

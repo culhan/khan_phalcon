@@ -17,34 +17,37 @@ class AuthController extends Phalcon\Mvc\Controller{
 
     if( !empty($params) ){
       
-      if($params['email'] == 'amalsholihan@gmail.com' && $params['password'] == '123456'){
-        
-        $user = (object) array(
-          "iat" => time(),
-          "nbf" => time()+$this->config->token->expiredTime // 5 minuts active
-        );
-        
-        // user param
-        $user->name = 'amalsholihan';
-        $user->email = 'amalsholihan@gmail.com';
-        
-        $token = JWT::encode($user, $this->jwt->secret);
-        
-        $data = array('token'=> $token);
-        
-        $this->storage->save( $token, $user, $this->config->token->expiredTime);
+      $user = Users::findFirstByName( $this->request->getPost('name') );
 
-        return ResponseHelper::printResult($data);
+      if ($user) {
 
+          if ($this->security->checkHash( $this->request->getPost('password'), $user->password )) {
+              
+              // user param                          
+              $dataJwt['iat'] = time();
+              $dataJwt['nbf'] = time()+$this->config->token->expiredTime;
+              $dataJwt['name'] = $user->name;
+              $dataJwt['email'] = $user->email;
+              $dataJwt = (object) $dataJwt;
+
+              $token = JWT::encode($dataJwt, $this->jwt->secret);
+              
+              $data = array('token'=> $token);
+
+              $this->storage->save( $token, $dataJwt, $this->config->token->expiredTime);
+
+              return ResponseHelper::printResult($data);
+
+          }
+
+      } else {
+          // To protect against timing attacks. Regardless of whether a user exists or not, the script will take roughly the same amount as it will always be computing a hash.
+          $this->security->hash(rand());
       }
 
     }
-    else
-    {
 
-      return ResponseHelper::unauthorized('Email or Password not match');
-
-    }
+    return ResponseHelper::unauthorized('Email or Password not match');
   }
 
 }
